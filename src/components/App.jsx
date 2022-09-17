@@ -30,11 +30,7 @@ export function App() {
   };
 
   useEffect(() => {
-    fethGetPixabay();
-  },[page,searchQuery]);
-
-  const fethGetPixabay = () => {
-    if (searchQuery !== '') {
+     if (searchQuery !== '') {
       getPixabay(searchQuery, page)
         .then(result => {
           
@@ -51,7 +47,8 @@ export function App() {
           }
         });
     }
-  }
+  },[page,searchQuery]);
+
   
   const handleClickLoadMore = () => {
     setShowLoader(true);
@@ -68,7 +65,7 @@ export function App() {
 
   return <Div>
       <Searchbar onSubmit={onSabmit}/>
-    {array === [] && (<ImageGallery array={array} toggleModal={toggleModal} />)}
+    {array.length !== 0 && (<ImageGallery array={array} toggleModal={toggleModal} />)}
     {array.length !== 0 && (<Button clickLoadMore={handleClickLoadMore}></Button>)}
       {showModal && (<Modal toggleModal={toggleModal}>
         <img src={img} alt="" />
