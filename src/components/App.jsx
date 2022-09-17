@@ -3,94 +3,76 @@ import { Modal } from './Modal/Modal';
 import { Button } from './Button/Button';
 import { Loader } from './Loader/Loader';
 import { getPixabay } from '../api';
-import { Component } from 'react';
 import { Div } from './App.styled';
-
-
 import { ImageGallery } from './ImageGallery/ImageGallery';
-export class App extends Component {
-  state = {
-    searchQuery: '',
-    page: 1,
-    array: [],
-    showModal: false,
-    img: '',
-    showLoader: false,
-  };
+import { useState,useEffect } from "react";
 
-  onSabmit = ({ name }) => {
-    this.setState(prevState => ({
-      array: [],
-      page: 1,
-      searchQuery: name,
-      showLoader: true,
-    }))
+
+export function App() {
+  const [searchQuery, setSearchQuery] = useState('');
+  const [page, setPage] = useState(1);
+  const [array, setArray] = useState([]);
+  const [showModal, setShowModal] = useState(false);
+  const [img, setImg] = useState('');
+  const [showLoader, setShowLoader] = useState(false);
+
+  const onSabmit = (name) => {
+    setArray([]);
+    setPage(1);
+    setSearchQuery(name);
+    setShowLoader(true)
+  
     setTimeout(() => {
-      this.setState(prevState => ({
-      showLoader: false,
-    }))
+      setShowLoader(false)
+      localStorage.setItem('searchQuery', JSON.stringify(name))
+      localStorage.setItem('page', JSON.stringify(page));
     }, 500);
   };
-  componentDidUpdate(prevProps, prevState) {
-    if (prevState.searchQuery !== this.state.searchQuery || prevState.page !== this.state.page) {
-      this.fethGetPixabay();
-    }
-}
-  fethGetPixabay = () => {
-    if (this.state.searchQuery !== '') {
-      getPixabay(this.state.searchQuery, this.state.page)
+
+  useEffect(() => {
+    fethGetPixabay();
+  },[page,searchQuery]);
+
+  const fethGetPixabay = () => {
+    if (searchQuery !== '') {
+      getPixabay(searchQuery, page)
         .then(result => {
           
-          this.setState(prevState => ({
-            array: [...prevState.array, ...result],
-          }))
+          setArray(prevState => [...prevState, ...result])
         
           if (result.length === 0) {
-             this.setState(prevState => ({
-            }))
-            alert(`Sorry, there are no images matching your search query: ${this.state.searchQuery}. Please try again.`)
-           
+            alert(`Sorry, there are no images matching your search query: ${searchQuery}. Please try again.`)
           }  
         })
         .catch(error => {
           console.log(error.Status)
           if (error) {
             alert("We're sorry, but you've reached the end of search results.")
-            
           }
         });
     }
   }
   
-  handleClickLoadMore = () => {
-    this.setState(prevState => ({
-      page: prevState.page + 1,
-      showLoader: true,
-    }))
+  const handleClickLoadMore = () => {
+    setShowLoader(true);
+    setPage(page + 1);
     setTimeout(() => {
-      this.setState(prevState => ({
-      showLoader: false,
-    }))
+      setShowLoader(false);
     }, 500);
   };
 
-  toggleModal = (currentImg) => {
-    this.setState(({showModal}) => ({
-      showModal: !showModal,
-      img: currentImg,
-    }))
+  const toggleModal = (currentImg) => {
+    setShowModal(!showModal);
+    setImg(currentImg)
   };
 
-  render() { 
-    const { array, showModal, img, showLoader } = this.state
-    return <Div>
-        <Searchbar onSubmit={this.onSabmit}/>
-      <ImageGallery array={array} toggleModal={this.toggleModal} />
-      {array.length !== 0 && (<Button clickLoadMore={this.handleClickLoadMore}></Button>)}
-        {showModal && (<Modal toggleModal={this.toggleModal}>
-          <img src={img} alt="" />
-      </Modal>)}
-      {showLoader && <Loader/> }
-     </Div>
-  };
+  return <Div>
+      <Searchbar onSubmit={onSabmit}/>
+    <ImageGallery array={array} toggleModal={toggleModal} />
+    {array.length !== 0 && (<Button clickLoadMore={handleClickLoadMore}></Button>)}
+      {showModal && (<Modal toggleModal={toggleModal}>
+        <img src={img} alt="" />
+    </Modal>)}
+    {showLoader && <Loader/> }
+    </Div>
 } 
