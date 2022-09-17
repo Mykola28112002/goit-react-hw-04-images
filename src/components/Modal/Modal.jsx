@@ -1,29 +1,39 @@
 import { Overlay,Modals } from './Modal.styled';
-import { Component } from 'react';
+import { useEffect } from "react";
+import PropTypes from 'prop-types';
 
-export class Modal extends Component {
-    modalClosed = (e) => {
+
+export function Modal({toggleModal,showModal,img}) {
+    const modalClosed = (e) => {
         if (e.currentTarget === e.target) {
-            this.props.toggleModal()
+            toggleModal()
         }
     }
-    componentDidMount() {
-        window.addEventListener('keydown', this.handleKeyDown)
-    };
-    componentWillUnmount() {
-        window.removeEventListener('keydown', this.handleKeyDown)
-    };
-
-    handleKeyDown = (e) => {
+    const handleKeyDown = (e) => {
         if (e.code === 'Escape') {
-            this.props.toggleModal()
+            toggleModal()
         };
     };
-    render() {
-        return <Overlay onClick={(e) => { this.modalClosed(e) }}>
-            <Modals>
-                {this.props.children}
-            </Modals>
-        </Overlay>
-    }
+    useEffect(() => {
+      if (showModal !== false) {
+        window.removeEventListener('keydown', handleKeyDown)
+      }
+      if (showModal !== true) {  
+        window.addEventListener('keydown', handleKeyDown);
+      }
+    },[showModal]);
+
+
+    return <Overlay onClick={(e) => {modalClosed(e)}}>
+        <Modals>
+            <img src={img} alt="" />
+        </Modals>
+    </Overlay>
+    
+};
+
+Modal.propTypes = {
+    showModal: PropTypes.bool,
+    toggleModal: PropTypes.func,
+    img: PropTypes.string
 };

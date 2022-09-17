@@ -19,4 +19,5 @@ ImageGallery.propTypes = {
       id: PropTypes.number.isRequired,
     })
   ),
+  toggleModal: PropTypes.func
 };

@@ -67,8 +67,7 @@ export function App() {
       <Searchbar onSubmit={onSabmit}/>
     {array.length !== 0 && (<ImageGallery array={array} toggleModal={toggleModal} />)}
     {array.length !== 0 && (<Button clickLoadMore={handleClickLoadMore}></Button>)}
-      {showModal && (<Modal toggleModal={toggleModal}>
-        <img src={img} alt="" />
+      {showModal && (<Modal toggleModal={toggleModal} showModal={showModal} img={img}>
     </Modal>)}
     {showLoader && <Loader/> }
     </Div>

@@ -1,6 +1,7 @@
 import { Formik, } from 'formik';
 import { Search,SearchForm,SearchField,Button } from './Searchbar.styled';
 import { useState } from "react";
+import PropTypes from 'prop-types';
 
 
 export function Searchbar({onSubmit}) {
@@ -38,4 +39,7 @@ export function Searchbar({onSubmit}) {
         </Formik>
     </Search>)
     
+};
+Searchbar.propTypes = {
+    onSubmit: PropTypes.func,
 };
