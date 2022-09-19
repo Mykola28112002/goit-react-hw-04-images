@@ -17,6 +17,7 @@ export function App() {
   const [showLoader, setShowLoader] = useState(false);
 
   const onSabmit = (name) => {
+    
     setArray([]);
     setPage(1);
     setSearchQuery(name);
